@@ -76,6 +76,26 @@ end-structure
   swap list-ptr @ + ! 
 ;
 
+: list64-insert { v n a -- } \ value index (still 0 based) list64
+
+  \ give to regular append if onserting at the end
+  n a list-len @ = if
+    v a list64-append
+    exit
+  then
+
+  1 a list64-resize
+  a list-ptr @ n cells +
+  a list-len @ n - 1-
+
+  1 swap do
+    dup i 1- cells + @
+    over i cells + !
+  -1 +loop
+
+  v swap !
+;
+
 \ remove last and return it's value
 : list64-pop ( a -- n )
   dup list-ptr @
