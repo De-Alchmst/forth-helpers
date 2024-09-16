@@ -29,10 +29,11 @@ end-structure
 
   swap
   dup 0<> if
-    0 do
+    0 swap 1- do \ start from the end, so that the order is preserved
+      \ n* list-ptr
       swap
       over list-ptr @ i cells + !
-    loop
+    -1 +loop
   else
     drop
   then
