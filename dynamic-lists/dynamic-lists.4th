@@ -51,15 +51,16 @@ end-structure
 ;
 
 : list64-remove { n a -- } \ index (starting at 0!) list64
-  \ remove last item with simple resize
+  \ if remove the last, use normal resize
   n a list-len 1- = if
     -1 a list64-resize
     exit
   then
 
-  a list-ptr @ n cells +
-  a list-len @ n 1- -
+  a list-ptr @ n cells + \ position of remove
+  a list-len @ n 1- - \ number of items left
 
+  \ shift all values comming after
   0 do
     dup i 1+ cells + @
     over i cells + !
@@ -79,16 +80,17 @@ end-structure
 
 : list64-insert { v n a -- } \ value index (still 0 based) list64
 
-  \ give to regular append if onserting at the end
+  \ give to regular append if inserting at the end
   n a list-len @ = if
     v a list64-append
     exit
   then
 
   1 a list64-resize
-  a list-ptr @ n cells +
-  a list-len @ n - 1-
+  a list-ptr @ n cells + \ position of append
+  a list-len @ n - 1- \ number of items after insertion
 
+  \ shift everything one further
   1 swap do
     dup i 1- cells + @
     over i cells + !
